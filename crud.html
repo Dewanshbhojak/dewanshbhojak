@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRUD Example</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        margin-bottom: 20px;
+    }
+    form {
+        margin-bottom: 20px;
+    }
+    input[type="text"] {
+        padding: 8px;
+        font-size: 16px;
+    }
+    button {
+        padding: 8px 16px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+
+<h1>CRUD Example</h1>
+
+<form id="userForm">
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <button type="submit">Add User</button>
+</form>
+
+<table id="userTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Users will be inserted here dynamically -->
+    </tbody>
+</table>
+
+<script>
+    let users = [];
+
+    const userForm = document.getElementById('userForm');
+    const userTable = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+
+    // Add event listener to form submission
+    userForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+
+        if (name && email) {
+            const id = Date.now(); // Generate unique ID
+            const user = { id, name, email };
+            users.push(user);
+            renderUsers();
+            userForm.reset();
+        }
+    });
+
+    // Render users
+    function renderUsers() {
+        userTable.innerHTML = '';
+        users.forEach(user => {
+            const row = `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <button onclick="editUser(${user.id})">Edit</button>
+                        <button onclick="deleteUser(${user.id})">Delete</button>
+                    </td>
+                </tr>
+            `;
+            userTable.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    // Delete user
+    function deleteUser(id) {
+        users = users.filter(user => user.id !== id);
+        renderUsers();
+    }
+
+    // Edit user
+    function editUser(id) {
+        const user = users.find(user => user.id === id);
+        if (user) {
+            const name = prompt('Enter new name:', user.name);
+            const email = prompt('Enter new email:', user.email);
+            if (name !== null && email !== null) {
+                user.name = name;
+                user.email = email;
+                renderUsers();
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
